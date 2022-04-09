@@ -1,6 +1,14 @@
 from pymongo import MongoClient
+from dotenv import load_dotenv
+import os
+ 
+load_dotenv()
 
-client = MongoClient("mongodb+srv://user1:user1@cluster0.oijg0.mongodb.net/myFirstDatabase?retryWrites=true&w=majority")
+USER = os.getenv('MONGO_USER')
+PASSWORD = os.getenv('MONGO_PASSWORD')
+str = 'mongodb+srv://' + USER + ':' + PASSWORD + '@cluster0.oijg0.mongodb.net/test?retryWrites=true&w=majority'
+
+client = MongoClient(str)
 
 db = client.learnira
 
