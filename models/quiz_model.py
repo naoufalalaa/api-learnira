@@ -4,7 +4,7 @@ from models.question_model import QuestionModel
 
 class QuizModel(BaseModel):
     title: str
-    description: str
+    description: Optional[str] 
     creator: str
     createdAt: str
     questions: Optional[List[QuestionModel]] = None

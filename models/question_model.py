@@ -1,14 +1,38 @@
 from typing import List, Optional
 from pydantic import BaseModel
-
+from enum import Enum 
 from models.response_model import ResponseModel
+
+class Difficulty(str, Enum):
+    EASY = "easy"
+    MEDIUM = "medium"
+    HARD = "hard"
 
 class QuestionModel(BaseModel):
     title: str
-    description: str 
-    difficulty: str
+    description: Optional[str]
+    difficulty: Difficulty
     responses: Optional[List[ResponseModel]] = None
     score: int
+
+    def __init__(self, title, description, difficulty, responses, score):
+        self.title = title
+        self.description = description
+        self.difficulty = difficulty
+        self.responses = responses
+        self.score = score
+
+    def __str__(self):
+        return f"{self.title} {self.description} {self.difficulty} {self.responses} {self.score}"
+    
+    def serial(self):
+        return {
+            "title": self.title,
+            "description": self.description,
+            "difficulty": self.difficulty,
+            "responses": [response.serial() for response in self.responses],
+            "score": self.score
+        }
 
 def questionModelSerial(question) -> dict:
     return {
