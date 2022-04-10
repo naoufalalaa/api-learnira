@@ -33,7 +33,6 @@ async def login(auth_details: AuthDetails):
     user = users.find_one({"username": auth_details.username})
     if (user is None) or (not auth_handler.verify_password(auth_details.password , user['password'])):
         raise HTTPException(status_code=401, detail='Invalid username and/or password')
-
     token = auth_handler.encode_token(user['username'])
     return { 'token': token }
 
@@ -42,6 +41,9 @@ async def login(auth_details: AuthDetails):
 async def get_users():
     return authsDetailsSerial(users.find())
 
+@app.get('/users/{id}',tags=["users"])
+async def get_user(id: str):
+    return authDetailsSerial(users.find_one({"_id": ObjectId(id)}))
 
 @app.get('/unprotected',tags=["users"])
 def unprotected():
@@ -84,8 +86,6 @@ def update_user(username: str, auth_details: AuthDetails,username_in=Depends(aut
 
 @app.delete('/user/{username}',tags=["users"])
 def delete_user(username: str, username_in=Depends(auth_handler.auth_wrapper)):
-
-
     user = users.find_one({"username": username})
     if user is None:
         raise HTTPException(status_code=404, detail='User not found')
