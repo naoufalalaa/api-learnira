@@ -7,27 +7,10 @@ class GameModel(BaseModel):
     username : str
     quiz_id : str
     questions : List[QuestionModel]
-    responses : List[ResponseModel]
-    score : int
-
-    def __init__(self, username, quiz_id, questions, responses, score):
-        self.username = username
-        self.quiz_id = quiz_id
-        self.questions = questions
-        self.responses = responses
-        self.score = score
-
-    def __str__(self):
-        return f"{self.username} {self.quiz_id} {self.questions} {self.responses} {self.score}"
+    responses : Optional[List[ResponseModel]] = []
+    score : Optional[int] = None
     
-    def dict(self):
-        return {
-            "username": self.username,
-            "quiz_id": self.quiz_id,
-            "questions": [question.dict() for question in self.questions],
-            "responses": [response.dict() for response in self.responses],
-            "score": self.score
-        }
+
 
     def serial(self):
         return {
@@ -43,8 +26,8 @@ def gameModelSerial(game) -> dict:
     return {
         "username": game["username"],
         "quiz_id": game["quiz_id"],
-        "questions": [question.serial() for question in game["questions"]],
-        "responses": [response.serial() for response in game["responses"]],
+        "questions": game["questions"],
+        "responses": game["responses"],
         "score": game["score"]
     }
 

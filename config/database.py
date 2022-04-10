@@ -16,5 +16,6 @@ users = db["users"]
 quizes = db["Quizes"]
 questions = db["questions"]
 responses = db["responses"]
+games = db["Games"]
  
 

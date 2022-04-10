@@ -47,4 +47,3 @@ async def get_creator(id: str):
     username = quizes.find_one({"_id": ObjectId(id)})["creator"]
     return users.find_one({"username": username},{"_id": 0,"password": 0,"email": 0})
 
-

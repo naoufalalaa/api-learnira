@@ -14,16 +14,6 @@ class QuestionModel(BaseModel):
     difficulty: Difficulty
     responses: Optional[List[ResponseModel]] = None
     score: int
-
-    def __init__(self, title, description, difficulty, responses, score):
-        self.title = title
-        self.description = description
-        self.difficulty = difficulty
-        self.responses = responses
-        self.score = score
-
-    def __str__(self):
-        return f"{self.title} {self.description} {self.difficulty} {self.responses} {self.score}"
     
     def serial(self):
         return {

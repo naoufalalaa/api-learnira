@@ -1,8 +1,13 @@
 from fastapi import FastAPI, Depends, HTTPException
 from auth import AuthHandler
 from models.schemas import AuthDetails,authDetailsSerial,authsDetailsSerial
+from models.quiz_model import QuizModel,quizesModelSerial,quizModelSerial
+from models.game import GameModel,gameModelSerial,gamesModelSerial
 from config.database import users
+from config.database import quizes,games
 from routes.quiz_routes import quizes_api_router
+import random
+from bson import ObjectId
 
 
 app = FastAPI()
@@ -79,6 +84,8 @@ def update_user(username: str, auth_details: AuthDetails,username_in=Depends(aut
 
 @app.delete('/user/{username}',tags=["users"])
 def delete_user(username: str, username_in=Depends(auth_handler.auth_wrapper)):
+
+
     user = users.find_one({"username": username})
     if user is None:
         raise HTTPException(status_code=404, detail='User not found')
@@ -86,3 +93,47 @@ def delete_user(username: str, username_in=Depends(auth_handler.auth_wrapper)):
         raise HTTPException(status_code=401, detail='Not authorized')
     users.delete_one({"username": username})
     return { 'username': username }
+
+
+#GAME
+@app.get('/quiz/{id}/game',tags=["game"])
+def get_game(id: str,username=Depends(auth_handler.auth_wrapper)):
+    user = users.find_one({"username": username})
+    if user is None:
+        raise HTTPException(status_code=404, detail='User not found')
+
+    quiz = quizes.find_one({"_id": ObjectId(id)})
+    if quiz is None:
+        raise HTTPException(status_code=404, detail='Quiz not found')
+    
+    questions = quiz['questions']
+    game_qst = []
+    easy_qst = []
+    medium_qst = []
+    hard_qst = []
+    for question in questions:
+        question['difficulty'] 
+        if question['difficulty'] == 'easy':
+            easy_qst.append(question)
+        if question['difficulty'] == 'medium':
+            medium_qst.append(question)
+        if question['difficulty'] == 'hard':
+            hard_qst.append(question)
+
+    if len(easy_qst) > 0:
+        game_qst.append(random.choice(easy_qst))
+    if len(medium_qst) > 0:
+        game_qst.append(random.choice(medium_qst))
+    if len(hard_qst) > 0:
+        game_qst.append(random.choice(hard_qst))
+    
+    game = {
+        "username": username,
+        "quiz_id": id,
+        "questions": game_qst,
+        "responses": [],
+        "score": 0,
+    }
+
+    _id = games.insert_one(game)
+    return gameModelSerial(games.find_one({"_id": _id.inserted_id}))

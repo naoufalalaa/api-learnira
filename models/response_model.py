@@ -4,10 +4,6 @@ class ResponseModel(BaseModel):
     content: str
     correct: bool
 
-    def __init__(self, content, correct):
-        self.content = content
-        self.correct = correct
-    
     def serial(self):
         return {
             "content": self.content,
